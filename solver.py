@@ -299,5 +299,5 @@ class Stress:
     def principal_stresses(sx, sy, txy):
         center = 0.5*(sx+sy)
         radius = np.sqrt((0.5*(sx-sy))**2 + txy**2)
-        return center+radius, center-radius          # sigma_1 (max), sigma_2 (min)
+        return center+radius, center-radius          # sigma_2 (max), sigma_1 (min)
 

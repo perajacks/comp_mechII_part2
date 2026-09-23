@@ -134,7 +134,7 @@ if __name__ == "__main__":
         results.append((md, n_elem, w_max, s_max))
         print(f"{md-1:>6} {n_elem:>8} {w_max*1e3:>12.5f} {s_max/1e6:>12.4f}")
 
-    # ← αυτές έλειπαν
+
     n_elems = [r[1] for r in results]
     s_maxs  = [r[3]/1e6 for r in results]
 
@@ -143,7 +143,7 @@ plt.plot(n_elems, s_maxs, 's-', color='coral', label='FEM')
 plt.axhline(0.802, color='gray', linestyle='--', label='NAFEMS 0.802 MPa')
 plt.xlabel('Αριθμός στοιχείων')
 plt.ylabel('σ_max (MPa)')
-plt.title('Σύγκλιση μέγιστης κύριας τάσης')
+plt.title('Convergence of maximum stress')
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
