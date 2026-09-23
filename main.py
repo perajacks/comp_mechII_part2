@@ -136,15 +136,25 @@ if __name__ == "__main__":
 
 
     n_elems = [r[1] for r in results]
+    w_maxs  = [r[2]*1e3 for r in results]
     s_maxs  = [r[3]/1e6 for r in results]
 
-    plt.figure(figsize=(7, 5))
-plt.plot(n_elems, s_maxs, 's-', color='coral', label='FEM')
-plt.axhline(0.802, color='gray', linestyle='--', label='NAFEMS 0.802 MPa')
-plt.xlabel('Αριθμός στοιχείων')
-plt.ylabel('σ_max (MPa)')
-plt.title('Convergence of maximum stress')
-plt.legend()
-plt.grid(True, alpha=0.3)
-plt.tight_layout()
+    fig1, ax1 = plt.subplots(figsize=(7, 5))
+    ax1.semilogx(n_elems, w_maxs, 'o-', color='steelblue')
+    ax1.set_xlabel('Number of elements')
+    ax1.set_ylabel('w_max (mm)')
+    ax1.set_title('Convergence of maximum displacement')
+    ax1.grid(True, which='both', alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+    
+    fig2, ax2 = plt.subplots(figsize=(7, 5))
+    ax2.semilogx(n_elems, s_maxs, 's-', color='coral', label='FEM')
+    ax2.axhline(0.802, color='gray', linestyle='--', label='NAFEMS 0.802 MPa')
+    ax2.set_xlabel('Number of elements')
+    ax2.set_ylabel('σ_max (MPa)')
+    ax2.set_title('Convergence of maximum principal stress')
+    ax2.legend()
+    ax2.grid(True, which='both', alpha=0.3)
+    plt.tight_layout()
 plt.show()
