@@ -78,8 +78,8 @@ where $[S] = z[E][B_\tau]$ is the stress matrix.
 
 # Results
 
-The program runs on mesh made by 4x4, 8x8, 16x16, 32x32, 54x54, 76x76 ,96x96 elements.
-As the mesh gets denser the results converge for maximum displasment and maximum prinsipale stress at the bottome of the plate.
+The program runs on mesh made by 4x4, 8x8, 16x16, 32x32, 54x54, 76x76, 96x96 elements.
+As the mesh gets denser the results converge for maximum displacement and maximum principal stress at the bottom of the plate.
 We calculate those numbers only on the node that diagonals of the shape meet.
 
 <img width="993" height="705" alt="image" src="https://github.com/user-attachments/assets/4fc92630-97d4-470e-8641-8b25715fb87b" />
@@ -87,14 +87,25 @@ We calculate those numbers only on the node that diagonals of the shape meet.
 
 <img width="993" height="705" alt="image" src="https://github.com/user-attachments/assets/f48b610c-f591-4033-b642-82c989aab70b" />
 
-We use as a refrense for the maximum prinsipal stress a value given by NAFEMS LSB1 as σ* = 0.802 MPa.
-We can see that the program nears to the given value iven thow it never reaches it. 
+We use as a reference for the maximum principal stress a value given by NAFEMS LSB1 as σ* = 0.802 MPa.
+We can see that the program nears to the given value even though it never reaches it.
 
-The total displasment graph for the hole stractue is:
+The total displacement graph for the whole structure is:
 
 <img width="1145" height="993" alt="image" src="https://github.com/user-attachments/assets/f0666f78-7429-417d-9ad0-23734cfcf0aa" />
 
-The displasments are following what we would expect acording to the boundary conditions end presure effecting the plate
+The displacements are following what we would expect according to the boundary conditions and pressure affecting the plate.
+
+Below are given the maximum values given by the different meshes:
+   element_dim   n_elem   w_max (mm)  s_max (MPa)   |σ|/σ*
+--------------------------------------------------------
+           4       16      0.00286       0.2682    0.334
+           8       64      0.00772       0.4566    0.569
+          16      256      0.01119       0.6238    0.778
+          32     1024      0.01290       0.7116    0.887
+          54     2916      0.01361       0.7466    0.931
+          76     5776      0.01392       0.7612    0.949
+          96     9216      0.01408       0.7686    0.958
 
 
 
