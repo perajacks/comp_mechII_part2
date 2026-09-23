@@ -76,7 +76,25 @@ $$\{\sigma\} = [E]\,z\,[B_\tau]\{d\} = [S]\{d\}$$
 
 where $[S] = z[E][B_\tau]$ is the stress matrix.
 
+# Results
 
+The program runs on mesh made by 4x4, 8x8, 16x16, 32x32, 54x54, 76x76 ,96x96 elements.
+As the mesh gets denser the results converge for maximum displasment and maximum prinsipale stress at the bottome of the plate.
+We calculate those numbers only on the node that diagonals of the shape meet.
+
+<img width="993" height="705" alt="image" src="https://github.com/user-attachments/assets/4fc92630-97d4-470e-8641-8b25715fb87b" />
+
+
+<img width="993" height="705" alt="image" src="https://github.com/user-attachments/assets/f48b610c-f591-4033-b642-82c989aab70b" />
+
+We use as a refrense for the maximum prinsipal stress a value given by NAFEMS LSB1 as σ* = 0.802 MPa.
+We can see that the program nears to the given value iven thow it never reaches it. 
+
+The total displasment graph for the hole stractue is:
+
+<img width="1145" height="993" alt="image" src="https://github.com/user-attachments/assets/f0666f78-7429-417d-9ad0-23734cfcf0aa" />
+
+The displasments are following what we would expect acording to the boundary conditions end presure effecting the plate
 
 
 
