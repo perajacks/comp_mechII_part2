@@ -97,8 +97,8 @@ The total displacement graph for the whole structure is:
 The displacements are following what we would expect according to the boundary conditions and pressure affecting the plate.
 
 Below are given the maximum values given by the different meshes:
-   element_dim   n_elem   w_max (mm)  s_max (MPa)   |σ|/σ*
---------------------------------------------------------
+       element_dim   n_elem   w_max (mm)  s_max (MPa)   |σ|/σ*
+    --------------------------------------------------------
            4       16      0.00286       0.2682    0.334
            8       64      0.00772       0.4566    0.569
           16      256      0.01119       0.6238    0.778
