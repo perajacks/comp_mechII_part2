@@ -40,8 +40,41 @@ $$\{k\} = [\beta][A]^{-1}\{d\} \quad \Rightarrow \quad \{k\} = [B_\tau] \ \{d\}$
 
 where $[B_\tau] = [\beta][A]^{-1}$ is the **strain-displacement matrix**.
 
+### Stiffness Matrix $[k_e]$
 
+**Stress-strain relation:** $\{\sigma\} = [E]\{\varepsilon\}$, where $\{\varepsilon\} = z\{k\}$
 
+$$[E] = \frac{E}{1-\nu^2} \begin{bmatrix} 1 & \nu & 0; \\ \nu & 1 & 0; \\ 0 & 0 & \frac{1-\nu}{2}; \end{bmatrix}$$
+
+**Principle of Virtual Work:**
+
+$$W_{int} = \int_{V_e} \{\bar{\varepsilon}\}^T [E] \{\varepsilon\} \, dV_e$$
+
+Integrating through the thickness:
+
+$$W_{int} = \int_{A_e} \{\bar{k}\}^T [E_k] \{k\} \, dA_e$$
+
+where:
+
+$$[E_k] = \frac{t^3}{12}[E] = D_k \begin{bmatrix} 1 & \nu & 0; \\ \nu & 1 & 0 ;\\ 0 & 0 & \frac{1-\nu}{2} \end{bmatrix}, \qquad D_k = \frac{Et^3}{12(1-\nu^2)}$$
+
+**Element stiffness matrix:** Given $\{k\} = [B_\tau]\{d\}$:
+
+$$[k_e] = \int_{A_e} [B_\tau]^T [E_k] [B_\tau] \, dA_e = \int_{-b}^{+b}\int_{-a}^{+a} [B_\tau]^T [E_k] [B_\tau] \, dx\, dy$$
+
+where $[B_\tau] = [\beta][A]^{-1}$. 
+
+The integrals are evaluated using Gauss quadrature.
+
+Finally for the Moment vector:
+
+$$\{M\} = \begin{bmatrix} M_x & M_y & M_{xy} \end{bmatrix}^T = [E_k][B_\tau]\{d\}$$
+
+And from that is eazy to calculate the stress vector:
+
+$$\{\sigma\} = [E]\,z\,[B_\tau]\{d\} = [S]\{d\}$$
+
+where $[S] = z[E][B_\tau]$ is the stress matrix.
 
 
 
