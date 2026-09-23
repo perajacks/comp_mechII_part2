@@ -1,5 +1,6 @@
 import numpy as np
-import sympy as sm
+
+# weights in gauss intergration are 1 as a result we will not calculate them
 
 class KirchhoffPlateElement:
     def __init__(self, mesh, material):
@@ -35,9 +36,9 @@ class KirchhoffPlateElement:
         by = y4 - y1
        
         
-        a = 0.5 * np.hypot(ax, ay)   
-        b = 0.5 * np.hypot(bx, by)
-     
+        a = 1 
+        b = 1
+
 
         Delta = ax*by - ay*bx
         detJ = np.abs(Delta) / 4.0
@@ -52,8 +53,8 @@ class KirchhoffPlateElement:
 
         Tn = np.array([
            [1, 0, 0],
-           [0, JinvT[0,0], JinvT[0,1]],
-           [0, JinvT[1,0], JinvT[1,1]]
+           [0, -JinvT[0,0], -JinvT[0,1]],
+           [0, -JinvT[1,0], -JinvT[1,1]]
         ])
                                        
 
@@ -95,7 +96,7 @@ class KirchhoffPlateElement:
        [-2*bx*by,  -2*ax*ay,    ax*by + ay*bx]
          ], dtype=float)
 
-        trans_inv_A = np.transpose(invA)
+  
         for i in  xi:
             for j in hta:
                 
@@ -111,10 +112,10 @@ class KirchhoffPlateElement:
                 
                 BT = b_matix @ invA
                 
-                Bx = BT @ Te_inv
+                Bx = TB @ BT @ Te_inv
         
 
-                ke = ke + (np.transpose(Bx) @ Ek @ Bx) * detJ
+                ke = ke + (np.transpose(Bx) @ Ek @ Bx) * abs(detJ)
                 
            
         
@@ -141,7 +142,7 @@ class Assembler:
         return K
     
     
-    def assemble_load(self, fe_obj, q):          # test claud
+    def assemble_load(self, fe_obj, q):         
         F = np.zeros(self.mesh.ndof)
         for conn in self.mesh.elements:
             elem_coords = self.mesh.nodes[conn]
@@ -162,7 +163,7 @@ class Fe:
     def __init__(self, mesh, material):
         self.mesh = mesh
         self.mat = material
-        
+      
     def fe(self,elem_nodes, q):
         
         x1, y1 = elem_nodes[0]
@@ -181,17 +182,14 @@ class Fe:
         by = y4 - y1
        
         
-        a = 0.5 * np.hypot(ax, ay)   
-        b = 0.5 * np.hypot(bx, by)
+        a = 1 
+        b = 1
      
 
         Delta = ax*by - ay*bx
         detJ = np.abs(Delta) / 4.0
+       
 
-        invJ = (2.0/Delta) * np.array([
-           [by, -bx],
-           [-ay, ax]
-            ])
         
         
         A = np.array([
@@ -217,8 +215,11 @@ class Fe:
         
         g = np.zeros(12, dtype=float)
         
+    
+        
         for r in xi:
            for s in hta:
+
                x = a * r
                y = b * s
     
@@ -228,8 +229,75 @@ class Fe:
                    x**3*y, x*y**3
                ], dtype=float)
     
-               g += X * q * detJ   # weights=1 στο 2×2 Gauss
+               g += X * q * abs(detJ)   
     
-               fe = trans_inv_A  @ g
+        fe =  trans_inv_A  @ g
         return fe
+    
+class Stress:
+    def moments_at_point(elem_coords, d_disp, mat, x_local, y_local):
+
+        
+        x1, y1 = elem_coords[0]; x2, y2 = elem_coords[1]; x4, y4 = elem_coords[3]
+        ax = x2-x1; ay = y2-y1; bx = x4-x1; by = y4-y1
+        
+        a = 1 
+        b = 1
+        
+        Delta = ax*by - ay*bx
+
+        invJ = (2.0/Delta) * np.array([[by, -bx], [-ay, ax]])
+        JinvT = np.transpose(invJ)
+        Tn = np.array([[1,0,0],[0,-JinvT[0,0],-JinvT[0,1]],[0,-JinvT[1,0],-JinvT[1,1]]])
+        Te = np.block([[Tn,np.zeros((3,3)),np.zeros((3,3)),np.zeros((3,3))],
+                       [np.zeros((3,3)),Tn,np.zeros((3,3)),np.zeros((3,3))],
+                       [np.zeros((3,3)),np.zeros((3,3)),Tn,np.zeros((3,3))],
+                       [np.zeros((3,3)),np.zeros((3,3)),np.zeros((3,3)),Tn]])
+        Te_inv = np.linalg.inv(Te)
+
+        A = np.array([
+        [1, -a, -b,  a**2,  a*b,  b**2,  -a**3,  -a**2*b,  -a*b**2,  -b**3,   a**3*b,   a*b**3],
+        [0,  0,  1,   0,   -a,   -2*b,     0,      a**2,     2*a*b,   3*b**2,  -a**3,   -3*a*b**2],
+        [0,  1,  0,  -2*a, -b,    0,    3*a**2,   2*a*b,    b**2,      0,    -3*a**2*b,  -b**3],
+        [1,  a, -b,  a**2, -a*b,  b**2,   a**3,   -a**2*b,   a*b**2,  -b**3,  -a**3*b,  -a*b**3],
+        [0,  0,  1,   0,    a,   -2*b,     0,      a**2,    -2*a*b,   3*b**2,   a**3,    3*a*b**2],
+        [0,  1,  0,   2*a, -b,    0,    3*a**2,  -2*a*b,    b**2,      0,    -3*a**2*b,  -b**3],
+        [1,  a,  b,  a**2,  a*b,  b**2,   a**3,    a**2*b,   a*b**2,   b**3,   a**3*b,   a*b**3],
+        [0,  0,  1,   0,    a,    2*b,     0,      a**2,     2*a*b,   3*b**2,   a**3,    3*a*b**2],
+        [0,  1,  0,   2*a,  b,    0,    3*a**2,   2*a*b,    b**2,      0,     3*a**2*b,   b**3],
+        [1, -a,  b,  a**2, -a*b,  b**2,  -a**3,    a**2*b,  -a*b**2,   b**3,  -a**3*b,  -a*b**3],
+        [0,  0,  1,   0,   -a,    2*b,     0,      a**2,    -2*a*b,   3*b**2,  -a**3,   -3*a*b**2],
+        [0,  1,  0,  -2*a,  b,    0,    3*a**2,  -2*a*b,    b**2,      0,     3*a**2*b,   b**3]
+        ], dtype=float)
+        invA = np.linalg.inv(A)
+
+        x, y = x_local, y_local
+        b_matrix = np.array([
+            [0,0,0,2,0,0,6*x,2*y,0,0,6*x*y,0],
+            [0,0,0,0,0,2,0,0,2*x,6*y,0,6*x*y],
+            [0,0,0,0,2,0,0,4*x,4*y,0,6*x**2,6*y**2]
+        ], dtype=float)
+        
+        TB = (4.0/Delta**2) * np.array([
+        [by**2,      ay**2,      -ay*by],
+        [bx**2,      ax**2,      -ax*bx],
+        [-2*bx*by,  -2*ax*ay,    ax*by+ay*bx]
+            ])
+
+
+        BT = b_matrix @ invA
+        Bx = TB @ BT @ Te_inv
+        kappa = Bx @ d_disp                       # [kxx, kyy, 2kxy]
+
+        nu = mat.nu
+        Ek = mat.D * np.array([[1,nu,0],[nu,1,0],[0,0,(1-nu)/2]])
+        return Ek @ kappa                            # [Mxx, Myy, Mxy]
+            
+
+
+
+    def principal_stresses(sx, sy, txy):
+        center = 0.5*(sx+sy)
+        radius = np.sqrt((0.5*(sx-sy))**2 + txy**2)
+        return center+radius, center-radius          # sigma_1 (max), sigma_2 (min)
 
